@@ -1,7 +1,7 @@
 const core = require('@actions/core')
 const exec = require('@actions/exec')
 const io = require('@actions/io')
-const fs = require('node:fs')
+const fs = require('node:fs/promises')
 const { wait } = require('./wait')
 
 /**

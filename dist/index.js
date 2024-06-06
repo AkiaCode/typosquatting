@@ -3959,7 +3959,7 @@ exports["default"] = _default;
 const core = __nccwpck_require__(186)
 const exec = __nccwpck_require__(514)
 const io = __nccwpck_require__(436)
-const fs = __nccwpck_require__(561)
+const fs = __nccwpck_require__(977)
 const { wait } = __nccwpck_require__(312)
 
 /**
@@ -4103,11 +4103,11 @@ module.exports = require("net");
 
 /***/ }),
 
-/***/ 561:
+/***/ 977:
 /***/ ((module) => {
 
 "use strict";
-module.exports = require("node:fs");
+module.exports = require("node:fs/promises");
 
 /***/ }),
 
