@@ -3957,9 +3957,10 @@ exports["default"] = _default;
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 const core = __nccwpck_require__(186)
-const { wait } = __nccwpck_require__(312)
 const exec = __nccwpck_require__(514)
 const io = __nccwpck_require__(436)
+const fs = __nccwpck_require__(561)
+const { wait } = __nccwpck_require__(312)
 
 /**
  * The main function for the action.
@@ -3978,12 +3979,28 @@ async function run() {
     core.debug(new Date().toTimeString())
 
     const pythonPath = await io.which('python', true)
-    const { stdout } = await exec.getExecOutput(`"${pythonPath}"`, [
-      '-c',
-      'from datetime import datetime;import time;now = datetime.now();formatted_time = now.strftime("%H:%M:%S %Z") + time.strftime(" (GMT%z)");print(formatted_time)'
-    ])
+    const pipPath = await io.which('pip', true)
+    await exec.exec(
+      `"${pipPath}" install requests sentence-transformers pipdeptree lxml tqdm pyxdameraulevenshtein`
+    )
+    await exec.getExecOutput(`"${pythonPath}"`, ['./src/tool.py', '--update'])
+
+    await exec.getExecOutput(`"${pythonPath}"`, ['./src/tool.py', 'setuptools'])
     // Set outputs for other workflow steps to use
-    core.setOutput('time', stdout)
+    core.setOutput('time', new Date().toTimeString())
+
+    const content = await fs.readFile('./typosquatting_results.json')
+    console.log(JSON.parse(content))
+    // summary
+    await core.summary
+      .addHeading('Results')
+      .addTable([
+        [
+          { data: 'Package', header: true },
+          { data: 'Result', header: true }
+        ]
+      ])
+      .write()
   } catch (error) {
     // Fail the workflow run if an error occurs
     core.setFailed(error.message)
@@ -4082,6 +4099,14 @@ module.exports = require("https");
 
 "use strict";
 module.exports = require("net");
+
+/***/ }),
+
+/***/ 561:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("node:fs");
 
 /***/ }),
 

@@ -1,7 +1,8 @@
 const core = require('@actions/core')
-const { wait } = require('./wait')
 const exec = require('@actions/exec')
 const io = require('@actions/io')
+const fs = require('node:fs')
+const { wait } = require('./wait')
 
 /**
  * The main function for the action.
@@ -20,12 +21,29 @@ async function run() {
     core.debug(new Date().toTimeString())
 
     const pythonPath = await io.which('python', true)
-    const { stdout } = await exec.getExecOutput(`"${pythonPath}"`, [
-      '-c',
-      'from datetime import datetime;import time;now = datetime.now();formatted_time = now.strftime("%H:%M:%S %Z") + time.strftime(" (GMT%z)");print(formatted_time)'
-    ])
+    const pipPath = await io.which('pip', true)
+    await exec.exec(
+      `"${pipPath}" install requests sentence-transformers pipdeptree lxml tqdm pyxdameraulevenshtein`
+    )
+    await exec.getExecOutput(`"${pythonPath}"`, ['./src/tool.py', '--update'])
+
+    await exec.getExecOutput(`"${pythonPath}"`, ['./src/tool.py', 'setuptools'])
     // Set outputs for other workflow steps to use
-    core.setOutput('time', stdout)
+    core.setOutput('time', new Date().toTimeString())
+
+    const content = await fs.readFile('./typosquatting_results.json')
+    const json = JSON.parse(content)
+    // summary
+    await core.summary
+      .addHeading('Results')
+      .addTable([
+        [
+          { data: 'Package', header: true },
+          { data: 'Result', header: true }
+        ],
+        json['setuptools']
+      ])
+      .write()
   } catch (error) {
     // Fail the workflow run if an error occurs
     core.setFailed(error.message)
