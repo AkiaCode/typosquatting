@@ -26,13 +26,13 @@ async function run() {
 
     const list = []
     for (const i of json[name]) {
-      if (i[1] >= 0.8 && i[1] !== 1) {
+      if (i[1] >= 0.8 && Math.abs(i[1] - 1) > Number.EPSILON) {
         core.warning(
           `Something went wrong. Suspicious package name detected: ${i[0]}.`,
           { title: 'Found Suspicious Package' }
         )
       }
-      if (i[1] !== 1) {
+      if (Math.abs(i[1] - 1) > Number.EPSILON) {
         list.push([{ data: i[0] }, { data: i[1].toFixed(2) }])
       }
     }
@@ -44,7 +44,7 @@ async function run() {
           { data: 'Package', header: true },
           { data: 'Result', header: true }
         ],
-        ...list.sort((a, b) => a - b)
+        ...list.sort((a, b) => parseFloat(a[1].data) - parseFloat(b[1].data))
       ])
       .write()
   } catch (error) {
