@@ -3975,7 +3975,7 @@ async function run() {
       `"${pipPath}" install requests sentence-transformers pipdeptree lxml tqdm pyxdameraulevenshtein`
     )
     await exec.getExecOutput(`"${pythonPath}"`, ['./src/tool.py', '--update'])
-    await exec.getExecOutput(`"${pythonPath}"`, ['./src/tool.py', 'setuptools'])
+    await exec.getExecOutput(`"${pythonPath}"`, ['./src/tool.py', name])
 
     const content = await fs.readFile('./typosquatting_results.json')
     const json = JSON.parse(content)
