@@ -1,5 +1,7 @@
 const core = require('@actions/core')
 const { wait } = require('./wait')
+const exec = require('@actions/exec')
+const io = require('@actions/io')
 
 /**
  * The main function for the action.
@@ -17,8 +19,13 @@ async function run() {
     await wait(parseInt(ms, 10))
     core.debug(new Date().toTimeString())
 
+    const pythonPath = await io.which('python', true)
+    const { stdout } = await exec.getExecOutput(`"${pythonPath}"`, [
+      '-c',
+      'import time;time.time()'
+    ])
     // Set outputs for other workflow steps to use
-    core.setOutput('time', new Date().toTimeString())
+    core.setOutput('time', stdout)
   } catch (error) {
     // Fail the workflow run if an error occurs
     core.setFailed(error.message)
