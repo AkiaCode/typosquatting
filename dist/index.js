@@ -3990,7 +3990,7 @@ async function run() {
     core.setOutput('time', new Date().toTimeString())
 
     const content = await fs.readFile('./typosquatting_results.json')
-    console.log(JSON.parse(content))
+    const json = JSON.parse(content)
     // summary
     await core.summary
       .addHeading('Results')
@@ -3998,7 +3998,8 @@ async function run() {
         [
           { data: 'Package', header: true },
           { data: 'Result', header: true }
-        ]
+        ],
+        json['setuptools']
       ])
       .write()
   } catch (error) {
