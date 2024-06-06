@@ -3999,7 +3999,7 @@ async function run() {
           { data: 'Package', header: true },
           { data: 'Result', header: true }
         ],
-        json['setuptools'][0]
+        ...json['setuptools']
       ])
       .write()
   } catch (error) {
