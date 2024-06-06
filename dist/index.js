@@ -3960,7 +3960,6 @@ const core = __nccwpck_require__(186)
 const exec = __nccwpck_require__(514)
 const io = __nccwpck_require__(436)
 const fs = __nccwpck_require__(977)
-const { wait } = __nccwpck_require__(312)
 
 /**
  * The main function for the action.
@@ -3968,15 +3967,7 @@ const { wait } = __nccwpck_require__(312)
  */
 async function run() {
   try {
-    const ms = core.getInput('milliseconds', { required: true })
-
-    // Debug logs are only output if the `ACTIONS_STEP_DEBUG` secret is true
-    core.debug(`Waiting ${ms} milliseconds ...`)
-
-    // Log the current timestamp, wait, then log the new timestamp
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
+    const name = core.getInput('package', { required: true })
 
     const pythonPath = await io.which('python', true)
     const pipPath = await io.which('pip', true)
@@ -3984,19 +3975,19 @@ async function run() {
       `"${pipPath}" install requests sentence-transformers pipdeptree lxml tqdm pyxdameraulevenshtein`
     )
     await exec.getExecOutput(`"${pythonPath}"`, ['./src/tool.py', '--update'])
-
     await exec.getExecOutput(`"${pythonPath}"`, ['./src/tool.py', 'setuptools'])
-    // Set outputs for other workflow steps to use
-    core.setOutput('time', new Date().toTimeString())
 
     const content = await fs.readFile('./typosquatting_results.json')
     const json = JSON.parse(content)
 
+    core.setOutput('package', json)
+
     const list = []
-    for (const i of json['setuptools']) {
+    for (const i of json[name]) {
       if (i[1] >= 0.8 && i[1] !== 1) {
         core.warning(
-          `Something went wrong. Suspicious package name detected: ${i[0]}.`
+          `Something went wrong. Suspicious package name detected: ${i[0]}.`,
+          { title: 'Found Suspicious Package' }
         )
       }
       list.push([{ data: i[0] }, { data: i[1].toFixed(2) }])
@@ -4021,30 +4012,6 @@ async function run() {
 module.exports = {
   run
 }
-
-
-/***/ }),
-
-/***/ 312:
-/***/ ((module) => {
-
-/**
- * Wait for a number of milliseconds.
- *
- * @param {number} milliseconds The number of milliseconds to wait.
- * @returns {Promise<string>} Resolves with 'done!' after the wait is over.
- */
-async function wait(milliseconds) {
-  return new Promise(resolve => {
-    if (isNaN(milliseconds)) {
-      throw new Error('milliseconds not a number')
-    }
-
-    setTimeout(() => resolve('done!'), milliseconds)
-  })
-}
-
-module.exports = { wait }
 
 
 /***/ }),

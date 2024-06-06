@@ -1,18 +1,18 @@
-name: 'The name of your action here'
+name: 'Typosquatting Detection'
 description: 'Provide a description here'
 author: 'Your name or organization here'
 
 # Define your inputs here.
 inputs:
-  milliseconds:
-    description: 'Your input description here'
+  package:
+    description: 'Your package'
     required: true
-    default: '1000'
+    default: 'setuptools'
 
 # Define your outputs here.
 outputs:
-  time:
-    description: 'Your output description here'
+  package:
+    description: 'Package Results'
 
 runs:
   using: node20
