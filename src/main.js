@@ -44,7 +44,7 @@ async function run() {
           { data: 'Package', header: true },
           { data: 'Result', header: true }
         ],
-        ...list.sort((a, b) => parseFloat(a[1].data) - parseFloat(b[1].data))
+        ...list.sort((a, b) => parseFloat(b[1].data) - parseFloat(a[1].data))
       ])
       .write()
   } catch (error) {
