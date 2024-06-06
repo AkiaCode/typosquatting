@@ -3991,6 +3991,11 @@ async function run() {
 
     const content = await fs.readFile('./typosquatting_results.json')
     const json = JSON.parse(content)
+
+    const list = []
+    for (const i of json['setuptools']) {
+      list.push([{ data: i[0] }, { data: i[1] }])
+    }
     // summary
     await core.summary
       .addHeading('Results')
@@ -3999,7 +4004,7 @@ async function run() {
           { data: 'Package', header: true },
           { data: 'Result', header: true }
         ],
-        [...json['setuptools']]
+        ...list
       ])
       .write()
   } catch (error) {
