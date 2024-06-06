@@ -3994,7 +3994,7 @@ async function run() {
 
     const list = []
     for (const i of json['setuptools']) {
-      if (i[1] >= 80) {
+      if (i[1] >= 0.8 && i[1] !== 1) {
         core.warning(
           `Something went wrong. Suspicious package name detected: ${i[0]}.`
         )
