@@ -22,7 +22,7 @@ async function run() {
     const pythonPath = await io.which('python', true)
     const { stdout } = await exec.getExecOutput(`"${pythonPath}"`, [
       '-c',
-      'import time;time.time()'
+      'from datetime import datetime;import time;now = datetime.now();formatted_time = now.strftime("%H:%M:%S %Z") + time.strftime(" (GMT%z)");print(formatted_time)'
     ])
     // Set outputs for other workflow steps to use
     core.setOutput('time', stdout)
