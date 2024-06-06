@@ -3984,7 +3984,7 @@ async function run() {
 
     const list = []
     for (const i of json[name]) {
-      if (i[1] >= 0.8 && Math.abs(i[1] - 1) > Number.EPSILON) {
+      if (i[1] >= 0.85 && Math.abs(i[1] - 1) > Number.EPSILON) {
         core.warning(
           `Something went wrong. Suspicious package name detected: ${i[0]}.`,
           { title: 'Found Suspicious Package' }
