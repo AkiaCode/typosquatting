@@ -32,7 +32,9 @@ async function run() {
           { title: 'Found Suspicious Package' }
         )
       }
-      list.push([{ data: i[0] }, { data: i[1].toFixed(2) }])
+      if (i[1] !== 1) {
+        list.push([{ data: i[0] }, { data: i[1].toFixed(2) }])
+      }
     }
     // summary
     await core.summary
@@ -42,7 +44,7 @@ async function run() {
           { data: 'Package', header: true },
           { data: 'Result', header: true }
         ],
-        ...list
+        ...list.sort((a, b) => a - b)
       ])
       .write()
   } catch (error) {
