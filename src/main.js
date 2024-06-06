@@ -36,11 +36,16 @@ async function run() {
 
     const list = []
     for (const i of json['setuptools']) {
-      list.push([{ data: i[0] }, { data: i[1] }])
+      if (i[1] >= 80) {
+        core.warning(
+          `Something went wrong. Suspicious package name detected: ${i[0]}.`
+        )
+      }
+      list.push([{ data: i[0] }, { data: i[1].toFixed(2) }])
     }
     // summary
     await core.summary
-      .addHeading('Results')
+      .addHeading('Typosquatting Detection')
       .addTable([
         [
           { data: 'Package', header: true },
