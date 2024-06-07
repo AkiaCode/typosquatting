@@ -3971,9 +3971,7 @@ async function run() {
 
     const pythonPath = await io.which('python', true)
     const pipPath = await io.which('pip', true)
-    await exec.exec(
-      `"${pipPath}" install requests sentence-transformers pipdeptree lxml tqdm pyxdameraulevenshtein`
-    )
+    await exec.exec(`"${pipPath}" install -r ./src/requirements.txt`)
     await exec.getExecOutput(`"${pythonPath}"`, ['./src/tool.py', '--update'])
     await exec.getExecOutput(`"${pythonPath}"`, ['./src/tool.py', name])
 
