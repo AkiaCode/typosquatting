@@ -22,11 +22,13 @@ async function run() {
       packages.push({ name: packageName, version: packageVersion })
     }
 
+    const pythonPath = await io.which('python', true)
+    await exec.getExecOutput(`"${pythonPath}"`, ['./src/tool.py', '--update'])
+
+    // summary
+    const summary = await core.summary
+
     for (const pkg of packages) {
-      const pythonPath = await io.which('python', true)
-      const pipPath = await io.which('pip', true)
-      await exec.exec(`"${pipPath}" install -r ./src/requirements.txt`)
-      await exec.getExecOutput(`"${pythonPath}"`, ['./src/tool.py', '--update'])
       await exec.getExecOutput(`"${pythonPath}"`, ['./src/tool.py', pkg.name])
 
       const content = await fs.readFile('./typosquatting_results.json')
@@ -46,18 +48,15 @@ async function run() {
           list.push([{ data: i[0] }, { data: i[1].toFixed(2) }])
         }
       }
-      // summary
-      await core.summary
-        .addHeading(`Typosquatting Detection: ${pkg.name}`)
-        .addTable([
-          [
-            { data: 'Package', header: true },
-            { data: 'Result', header: true }
-          ],
-          ...list.sort((a, b) => parseFloat(b[1].data) - parseFloat(a[1].data))
-        ])
-        .write()
+      summary.addHeading(`Typosquatting Detection: ${pkg.name}`).addTable([
+        [
+          { data: 'Package', header: true },
+          { data: 'Result', header: true }
+        ],
+        ...list.sort((a, b) => parseFloat(b[1].data) - parseFloat(a[1].data))
+      ])
     }
+    summary.write()
   } catch (error) {
     // Fail the workflow run if an error occurs
     core.setFailed(error.message)
