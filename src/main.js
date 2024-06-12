@@ -11,14 +11,14 @@ async function run() {
   try {
     const file = core.getInput('check-file', { required: true })
     const requirementsTxt = await fs.readFile(file, 'utf-8')
-    const pattern = /([a-zA-Z0-9-_.]+)==([0-9.]+)/g
+    const pattern = /([a-zA-Z0-9-_.]+)(?:==([0-9.]*))?/g
 
     let match
     const packages = []
 
     while ((match = pattern.exec(requirementsTxt)) !== null) {
       const packageName = match[1]
-      const packageVersion = match[2]
+      const packageVersion = match[2] || ''
       packages.push({ name: packageName, version: packageVersion })
     }
 
