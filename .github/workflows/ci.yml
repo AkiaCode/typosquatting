@@ -66,8 +66,8 @@ jobs:
         id: test-action
         uses: ./
         with:
-          package: tensorflow
+          check-file: ./src/requirements.txt
 
       - name: Print Output
         id: output
-        run: echo "${{ steps.test-action.outputs.package }}"
+        run: echo "${{ steps.test-action.outputs.check-output }}"

@@ -3967,42 +3967,55 @@ const fs = __nccwpck_require__(977)
  */
 async function run() {
   try {
-    const name = core.getInput('package', { required: true })
+    const file = core.getInput('check-file', { required: true })
+    const requirementsTxt = await fs.readFile(file, 'utf-8')
+    const pattern = /([a-zA-Z0-9-_.]+)==([0-9.]+)/g
 
-    const pythonPath = await io.which('python', true)
-    const pipPath = await io.which('pip', true)
-    await exec.exec(`"${pipPath}" install -r ./src/requirements.txt`)
-    await exec.getExecOutput(`"${pythonPath}"`, ['./src/tool.py', '--update'])
-    await exec.getExecOutput(`"${pythonPath}"`, ['./src/tool.py', name])
+    let match
+    const packages = []
 
-    const content = await fs.readFile('./typosquatting_results.json')
-    const json = JSON.parse(content)
-
-    core.setOutput('package', json)
-
-    const list = []
-    for (const i of json[name]) {
-      if (i[1] >= 0.85 && Math.abs(i[1] - 1) > Number.EPSILON) {
-        core.warning(
-          `Something went wrong. Suspicious package name detected: ${i[0]}.`,
-          { title: 'Found Suspicious Package' }
-        )
-      }
-      if (Math.abs(i[1] - 1) > Number.EPSILON) {
-        list.push([{ data: i[0] }, { data: i[1].toFixed(2) }])
-      }
+    while ((match = pattern.exec(requirementsTxt)) !== null) {
+      const packageName = match[1]
+      const packageVersion = match[2]
+      packages.push({ name: packageName, version: packageVersion })
     }
-    // summary
-    await core.summary
-      .addHeading('Typosquatting Detection')
-      .addTable([
-        [
-          { data: 'Package', header: true },
-          { data: 'Result', header: true }
-        ],
-        ...list.sort((a, b) => parseFloat(b[1].data) - parseFloat(a[1].data))
-      ])
-      .write()
+
+    for (const pkg of packages) {
+      const pythonPath = await io.which('python', true)
+      const pipPath = await io.which('pip', true)
+      await exec.exec(`"${pipPath}" install -r ./src/requirements.txt`)
+      await exec.getExecOutput(`"${pythonPath}"`, ['./src/tool.py', '--update'])
+      await exec.getExecOutput(`"${pythonPath}"`, ['./src/tool.py', pkg.name])
+
+      const content = await fs.readFile('./typosquatting_results.json')
+      const json = JSON.parse(content)
+
+      core.setOutput('check-output', json)
+
+      const list = []
+      for (const i of json[pkg.name]) {
+        if (i[1] >= 0.85 && Math.abs(i[1] - 1) > Number.EPSILON) {
+          core.warning(
+            `Something went wrong. Suspicious package name detected: ${i[0]}.`,
+            { title: 'Found Suspicious Package' }
+          )
+        }
+        if (Math.abs(i[1] - 1) > Number.EPSILON) {
+          list.push([{ data: i[0] }, { data: i[1].toFixed(2) }])
+        }
+      }
+      // summary
+      await core.summary
+        .addHeading(`Typosquatting Detection: ${pkg.name}`)
+        .addTable([
+          [
+            { data: 'Package', header: true },
+            { data: 'Result', header: true }
+          ],
+          ...list.sort((a, b) => parseFloat(b[1].data) - parseFloat(a[1].data))
+        ])
+        .write()
+    }
   } catch (error) {
     // Fail the workflow run if an error occurs
     core.setFailed(error.message)

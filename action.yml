@@ -4,15 +4,15 @@ author: 'Your name or organization here'
 
 # Define your inputs here.
 inputs:
-  package:
-    description: 'Your package'
+  check-file:
+    description: 'your deps file'
     required: true
-    default: 'setuptools'
+    default: './requirements.txt'
 
 # Define your outputs here.
 outputs:
-  package:
-    description: 'Package Results'
+  check-output:
+    description: 'Deps Results'
 
 runs:
   using: node20
