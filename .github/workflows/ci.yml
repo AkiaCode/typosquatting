@@ -81,6 +81,7 @@ jobs:
       - name: Test Local Action
         id: test-action
         uses: ./
+        working-directory: ./typos_tool
         with:
           check-file: ./src/requirements.txt
 
