@@ -26161,14 +26161,6 @@ const fs = __nccwpck_require__(3977)
  */
 async function run() {
   try {
-    /*
-      - json 에 있는 패키지 파일 3.0점 이상 패키지만 tar.gz다운로드
-      - 저장은 패키지명-버전명-tar.gz으로
-      - bomber+syft 코드로 타이포스쿼팅 탐지 결과 출력 및 취약패키지 cve 출력
-      ⇒ actions/http-client로 json에 있는 패키지 파일 다운로드 받음
-      ⇒ actions/cache로 패키지명-버전명-tar.gz로 저장하면 될 거 같음
-      ⇒ https://github.com/Hyunddu/typos_tool 에서 가지고 오기
-    */
     const file = core.getInput('check-file', { required: true })
     const requirementsTxt = await fs.readFile(file, 'utf-8')
     const pattern = /([a-zA-Z0-9-_.]+)(?:==([0-9.]*))?/g
@@ -26184,7 +26176,7 @@ async function run() {
 
     const pythonPath = await io.which('python', true)
     await exec.getExecOutput(`"${pythonPath}"`, [
-      './src/typos_tool/setup.py',
+      './typos_tool/setup.py',
       'install'
     ])
     await exec.getExecOutput(`myproject`, ['--update'])
