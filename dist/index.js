@@ -26175,10 +26175,10 @@ async function run() {
     }
 
     const pythonPath = await io.which('python', true)
-    await exec.getExecOutput(`"${pythonPath}"`, [
+    /*await exec.getExecOutput(`"${pythonPath}"`, [
       './typos_tool/setup.py',
       'install'
-    ])
+    ])*/
     await exec.getExecOutput(`"${pythonPath}"`, [
       '-m',
       'myproject.main',
