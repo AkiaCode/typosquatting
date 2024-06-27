@@ -23,22 +23,26 @@ async function run() {
     }
 
     const pythonPath = await io.which('python', true)
-    await exec.getExecOutput(`"${pythonPath}"`, ['./src/tool.py', '--update'])
+    await exec.getExecOutput(`"${pythonPath}"`, [
+      './src/typos_tool/setup.py',
+      'install'
+    ])
+    await exec.getExecOutput(`myproject`, ['--update'])
 
     // summary
     const summary = await core.summary
 
     for (const pkg of packages) {
-      await exec.getExecOutput(`"${pythonPath}"`, ['./src/tool.py', pkg.name])
+      await exec.getExecOutput(`myproject`, [pkg.name])
 
-      const content = await fs.readFile('./typosquatting_results.json')
+      const content = await fs.readFile('./final_typos.json')
       const json = JSON.parse(content)
 
       core.setOutput('check-output', json)
 
       const list = []
       for (const i of json[pkg.name]) {
-        if (i[1] >= 0.85 && Math.abs(i[1] - 1) > Number.EPSILON) {
+        if (i[1] >= 3.0 && Math.abs(i[1] - 1) > Number.EPSILON) {
           core.warning(
             `Something went wrong. Suspicious package name detected: ${i[0]}.`,
             { title: 'Found Suspicious Package' }
