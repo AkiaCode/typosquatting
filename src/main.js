@@ -48,8 +48,9 @@ async function run() {
 
       core.setOutput('check-output', json)
 
-      /*const list = []
+      const list = []
       for (const i of json[pkg.name]) {
+        if (i.length === 0) continue
         if (i[1] >= 3.0 && Math.abs(i[1] - 1) > Number.EPSILON) {
           core.warning(
             `Something went wrong. Suspicious package name detected: ${i[0]}.`,
@@ -66,7 +67,7 @@ async function run() {
           { data: 'Result', header: true }
         ],
         ...list.sort((a, b) => parseFloat(b[1].data) - parseFloat(a[1].data))
-      ])*/
+      ])
     }
     summary.write()
   } catch (error) {
