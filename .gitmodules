@@ -1,0 +1,3 @@
+[submodule "typos_tool"]
+	path = typos_tool
+	url = https://github.com/Hyunddu/typos_tool
