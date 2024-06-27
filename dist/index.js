@@ -26179,21 +26179,23 @@ async function run() {
       './typos_tool/setup.py',
       'install'
     ])*/
-    await exec.getExecOutput(`"${pythonPath}"`, [
+    /*await exec.getExecOutput(`"${pythonPath}"`, [
       '-m',
       'myproject.main',
       '--update'
-    ])
+    ])*/
+    await exec.getExecOutput(`myproject`, ['--update'])
 
     // summary
     const summary = await core.summary
 
     for (const pkg of packages) {
-      await exec.getExecOutput(`"${pythonPath}"`, [
+      /*await exec.getExecOutput(`"${pythonPath}"`, [
         '-m',
         'myproject.main',
         pkg.name
-      ])
+      ])*/
+      await exec.getExecOutput(`myproject`, [pkg.name])
 
       const content = await fs.readFile('./final_typos.json')
       const json = JSON.parse(content)
