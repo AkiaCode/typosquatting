@@ -33,7 +33,17 @@ async function run() {
       '--update'
     ])*/
     await exec.getExecOutput(`myproject`, ['--update'])
-
+    const options = { recursive: true, force: false }
+    await io.cp(
+      './typos_tool/yara_rules/yaramodel1.yara',
+      './yara_rules/yaramodel1.yara',
+      options
+    )
+    await io.cp(
+      './typos_tool/yara_rules/yaramodel4.yara',
+      './yara_rules/yaramodel4.yara',
+      options
+    )
     // summary
     const summary = await core.summary
 
