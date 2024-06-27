@@ -76,7 +76,7 @@ jobs:
       - if: steps.python_cache.outputs.cache-hit != 'true'
         run: |
           pip install -r ./typos_tool/requirements.txt
-          python ./typos_tool/setup.py install
+          cd ./typos_tool && pip install .
 
       - name: Test Local Action
         id: test-action
