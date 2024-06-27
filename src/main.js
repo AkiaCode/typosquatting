@@ -49,7 +49,8 @@ async function run() {
       core.setOutput('check-output', json)
 
       const list = []
-      for (const i of json[pkg.name]) {
+      const items = json[pkg.name] || []
+      for (const i of items) {
         if (i.length === 0) continue
         if (i[1] >= 3.0 && Math.abs(i[1] - 1) > Number.EPSILON) {
           core.warning(
